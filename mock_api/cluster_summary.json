@@ -1,0 +1,29 @@
+{
+  "status": "success",
+  "data": [
+    {
+      "type": "经济紧凑型",
+      "count": 6649,
+      "avg_total_price": 135.08,
+      "avg_unit_price": 11712.75,
+      "avg_area": 113.06,
+      "avg_year": 2014.4
+    },
+    {
+      "type": "改善均衡型",
+      "count": 584,
+      "avg_total_price": 151.97,
+      "avg_unit_price": 12343.72,
+      "avg_area": 117.64,
+      "avg_year": 0.0
+    },
+    {
+      "type": "高价大户型",
+      "count": 767,
+      "avg_total_price": 675.93,
+      "avg_unit_price": 26124.22,
+      "avg_area": 258.94,
+      "avg_year": 1940.2
+    }
+  ]
+}

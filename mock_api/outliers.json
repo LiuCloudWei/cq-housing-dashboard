@@ -1,0 +1,168 @@
+{
+  "status": "success",
+  "data": {
+    "count": 20,
+    "items": [
+      {
+        "community": "香港置地启元三期",
+        "district": "两江新区",
+        "total_price": 268.0,
+        "unit_price": 30014.0,
+        "area": 89.29,
+        "layout": "3室2厅"
+      },
+      {
+        "community": "观宸",
+        "district": "两江新区",
+        "total_price": 700.0,
+        "unit_price": 34784.0,
+        "area": 201.24,
+        "layout": "4室2厅"
+      },
+      {
+        "community": "香港置地启元一期",
+        "district": "两江新区",
+        "total_price": 460.0,
+        "unit_price": 29487.0,
+        "area": 156.0,
+        "layout": "3室2厅"
+      },
+      {
+        "community": "观宸",
+        "district": "两江新区",
+        "total_price": 557.0,
+        "unit_price": 32573.0,
+        "area": 171.0,
+        "layout": "4室2厅"
+      },
+      {
+        "community": "观宸",
+        "district": "两江新区",
+        "total_price": 370.0,
+        "unit_price": 31623.0,
+        "area": 117.0,
+        "layout": "3室2厅"
+      },
+      {
+        "community": "香港置地壹号半岛",
+        "district": "两江新区",
+        "total_price": 470.0,
+        "unit_price": 26478.0,
+        "area": 177.5,
+        "layout": "4室2厅"
+      },
+      {
+        "community": "重庆来福士住宅",
+        "district": "渝中区",
+        "total_price": 250.0,
+        "unit_price": 27173.0,
+        "area": 92.0,
+        "layout": "1室1厅"
+      },
+      {
+        "community": "重庆来福士",
+        "district": "渝中区",
+        "total_price": 850.0,
+        "unit_price": 26215.0,
+        "area": 324.24,
+        "layout": "4室2厅"
+      },
+      {
+        "community": "合景泰富·天銮",
+        "district": "渝中区",
+        "total_price": 300.0,
+        "unit_price": 24962.0,
+        "area": 120.18,
+        "layout": "3室2厅"
+      },
+      {
+        "community": "万科翡翠都会",
+        "district": "渝中区",
+        "total_price": 750.0,
+        "unit_price": 37688.0,
+        "area": 199.0,
+        "layout": "6室2厅"
+      },
+      {
+        "community": "重庆来福士住宅",
+        "district": "渝中区",
+        "total_price": 630.0,
+        "unit_price": 25855.0,
+        "area": 243.66,
+        "layout": "3室2厅"
+      },
+      {
+        "community": "万科锦绣滨江",
+        "district": "渝中区",
+        "total_price": 599.0,
+        "unit_price": 25274.0,
+        "area": 237.0,
+        "layout": "4室2厅"
+      },
+      {
+        "community": "重庆来福士住宅",
+        "district": "渝中区",
+        "total_price": 465.0,
+        "unit_price": 24392.0,
+        "area": 190.63,
+        "layout": "2室2厅"
+      },
+      {
+        "community": "重庆来福士",
+        "district": "渝中区",
+        "total_price": 890.0,
+        "unit_price": 31248.0,
+        "area": 284.81,
+        "layout": "4室2厅"
+      },
+      {
+        "community": "万科锦绣滨江",
+        "district": "渝中区",
+        "total_price": 850.0,
+        "unit_price": 26073.0,
+        "area": 326.0,
+        "layout": "5室2厅"
+      },
+      {
+        "community": "重庆来福士住宅",
+        "district": "渝中区",
+        "total_price": 738.0,
+        "unit_price": 27122.0,
+        "area": 272.1,
+        "layout": "3室2厅"
+      },
+      {
+        "community": "重庆来福士住宅",
+        "district": "渝中区",
+        "total_price": 890.0,
+        "unit_price": 31248.0,
+        "area": 284.81,
+        "layout": "4室2厅"
+      },
+      {
+        "community": "万科锦绣滨江",
+        "district": "渝中区",
+        "total_price": 820.0,
+        "unit_price": 27790.0,
+        "area": 295.07,
+        "layout": "5室2厅"
+      },
+      {
+        "community": "重庆来福士住宅",
+        "district": "渝中区",
+        "total_price": 1068.0,
+        "unit_price": 31966.0,
+        "area": 334.1,
+        "layout": "4室2厅"
+      },
+      {
+        "community": "重庆来福士",
+        "district": "渝中区",
+        "total_price": 970.0,
+        "unit_price": 35151.0,
+        "area": 275.95,
+        "layout": "4室2厅"
+      }
+    ]
+  }
+}

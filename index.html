@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重庆二手房数据分析与可视化系统</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/theme-chalk/dark/css-vars.css" />
+    <script src="https://unpkg.com/element-plus"></script>
+    <script src="https://unpkg.com/echarts/dist/echarts.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            /* Light Mode Variables */
+            --ink: #0f172a;
+            --muted: #64748b;
+            --line: #e2e8f0;
+            --paper: #f8fafc;
+            --panel: #ffffff;
+            --nav: #ffffff;
+            --brand: #4f46e5;
+            --brand-light: #e0e7ff;
+            --teal: #0d9488;
+            --gold: #d97706;
+            --red: #e11d48;
+            --shadow-sm: 0 4px 16px rgba(15, 23, 42, 0.03);
+            --shadow-md: 0 12px 32px rgba(15, 23, 42, 0.08);
+            --hero-bg: linear-gradient(135deg, #ffffff 0%, #f1f5f9 50%, #e0e7ff 100%);
+        }
+        
+        html.dark {
+            /* Dark Mode Variables */
+            --ink: #f8fafc;
+            --muted: #94a3b8;
+            --line: #334155;
+            --paper: #0f172a;
+            --panel: #1e293b;
+            --nav: #1e293b;
+            --brand: #6366f1;
+            --brand-light: #3730a3;
+            --teal: #14b8a6;
+            --gold: #f59e0b;
+            --red: #f43f5e;
+            --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.5);
+            --hero-bg: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #312e81 100%);
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: var(--paper);
+            color: var(--ink);
+            font-family: "Inter", "Microsoft YaHei", "PingFang SC", sans-serif;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .app-shell { min-height: 100vh; display: flex; flex-direction: column; }
+        @media (min-width: 1060px) { .app-shell { flex-direction: row; } }
+        
+        .side {
+            background: var(--nav);
+            color: var(--ink);
+            padding: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            height: 100vh;
+            width: 280px;
+            border-right: 1px solid var(--line);
+            box-shadow: 4px 0 24px rgba(0, 0, 0, .03);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            transition: all 0.3s ease;
+        }
+        html.dark .side { box-shadow: 4px 0 24px rgba(0, 0, 0, .2); }
+        .brand-block { padding: 0 8px; }
+        .brand-title { font-size: 22px; font-weight: 900; line-height: 1.3; color: var(--ink); background: linear-gradient(135deg, var(--ink), var(--brand)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .brand-sub { color: var(--muted); font-size: 13px; margin-top: 6px; line-height: 1.5; font-weight: 500; }
+        .nav-list { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .nav-item {
+            width: 100%;
+            border: 0;
+            background: transparent;
+            color: var(--muted);
+            text-align: left;
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+        }
+        .nav-item:hover { background: var(--line); color: var(--ink); transform: translateX(4px); }
+        .nav-item.active { background: var(--brand-light); color: var(--brand); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15); font-weight: 700; transform: translateX(6px); }
+        
+        .theme-toggle {
+            padding: 12px 16px;
+            border-radius: 12px;
+            background: var(--line);
+            color: var(--ink);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+        .theme-toggle:hover { filter: brightness(1.1); }
+
+        .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+        .topbar {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--line);
+            padding: 20px 32px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            transition: all 0.3s ease;
+        }
+        html.dark .topbar { background: rgba(30, 41, 59, 0.7); }
+        
+        .page-title { font-size: 24px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; }
+        .page-desc { color: var(--muted); font-size: 14px; margin-top: 6px; font-weight: 500; }
+        
+        .topbar-actions { display: flex; align-items: center; gap: 12px; }
+        .btn-refresh {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            color: var(--ink);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-refresh:hover { transform: translateY(-1px); border-color: var(--brand); }
+        .btn-refresh .icon { transition: transform 0.6s ease-in-out; }
+        .btn-refresh.spinning .icon { transform: rotate(360deg); }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        
+        .content { padding: 32px; flex: 1; }
+        
+        /* Staggered Animation Classes */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-cascade > * {
+            opacity: 0;
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .animate-cascade > *:nth-child(1) { animation-delay: 0.05s; }
+        .animate-cascade > *:nth-child(2) { animation-delay: 0.1s; }
+        .animate-cascade > *:nth-child(3) { animation-delay: 0.15s; }
+        .animate-cascade > *:nth-child(4) { animation-delay: 0.2s; }
+        .animate-cascade > *:nth-child(5) { animation-delay: 0.25s; }
+        .animate-cascade > *:nth-child(6) { animation-delay: 0.3s; }
+        .animate-cascade > *:nth-child(7) { animation-delay: 0.35s; }
+
+        .hero {
+            background: var(--hero-bg);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 32px;
+            display: grid;
+            grid-template-columns: 1.4fr .6fr;
+            gap: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .hero::before { content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 300px; background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(255,255,255,0) 70%); border-radius: 50%; transform: translate(30%, -30%); pointer-events: none; }
+        .hero h2 { font-size: 28px; line-height: 1.3; margin: 0; font-weight: 900; color: var(--ink); }
+        .hero p { margin: 12px 0 0; color: var(--muted); line-height: 1.7; font-size: 15px; }
+        .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+        
+        .insight-box {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.1);
+            transition: transform 0.3s ease;
+        }
+        html.dark .insight-box { background: rgba(30, 41, 59, 0.6); }
+        .insight-box:hover { transform: translateY(-4px); }
+        .insight-label { color: var(--muted); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+        .insight-value { font-size: 32px; font-weight: 900; margin-top: 8px; color: var(--brand); }
+        
+        .grid-metrics { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 20px; margin-bottom: 24px; }
+        .metric, .panel {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .metric:hover, .panel:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--muted); }
+        .metric { padding: 20px; min-height: 110px; display: flex; flex-direction: column; justify-content: center; }
+        .metric-label { color: var(--muted); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
+        .metric-value { color: var(--ink); font-size: 28px; font-weight: 900; margin-top: 10px; }
+        .metric-foot { color: var(--muted); font-size: 12px; margin-top: 6px; font-weight: 500; }
+        
+        .panel { padding: 24px; margin-bottom: 24px; }
+        .panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+        .panel-title { font-size: 18px; font-weight: 800; color: var(--ink); }
+        .panel-sub { color: var(--muted); font-size: 13px; margin-top: 4px; font-weight: 500; }
+        
+        .chart { height: 360px; width: 100%; }
+        .section-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 24px; margin-bottom: 24px; }
+        .wide { grid-column: 1 / -1; }
+        .tool-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px; margin-bottom: 24px; }
+        .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--brand-light);
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--brand);
+            font-size: 13px;
+            font-weight: 700;
+        }
+        
+        /* Table Customization for Dark/Light mode */
+        .el-table { 
+            --el-table-border-color: var(--line); 
+            --el-table-header-bg-color: var(--paper); 
+            --el-table-header-text-color: var(--muted);
+            --el-table-bg-color: transparent;
+            --el-table-tr-bg-color: transparent;
+            --el-table-text-color: var(--ink);
+            background-color: transparent !important;
+        }
+        .el-table th.el-table__cell { font-weight: 700 !important; }
+        .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell { background: var(--paper) !important; }
+        .el-table--enable-row-hover .el-table__body tr:hover>td.el-table__cell { background-color: var(--line) !important; }
+
+        @media (max-width: 1060px) {
+            .side { display: none; }
+            .hero { grid-template-columns: 1fr; }
+            .grid-metrics { grid-template-columns: repeat(2, minmax(0,1fr)); }
+            .section-grid, .tool-grid { grid-template-columns: 1fr; }
+            .topbar { position: static; padding: 20px 24px; }
+            .content { padding: 24px; }
+        }
+    </style>
+</head>
+<body>
+<div id="app" class="app-shell" :class="{'dark': isDark}">
+    <aside class="side">
+        <div class="brand-block">
+            <div class="brand-title">重庆二手房<br/>价格分析系统</div>
+            <div class="brand-sub">区域房价、房源结构与智能辅助分析</div>
+        </div>
+        <div class="nav-list">
+            <button v-for="item in navItems" :key="item.name" class="nav-item" :class="{active: activeTab === item.name}" @click="switchTab(item.name)">{{ item.label }}</button>
+        </div>
+        
+        <!-- Dark Mode Toggle -->
+        <button class="theme-toggle" @click="toggleTheme">
+            <span v-if="!isDark">🌙 切换至夜间模式</span>
+            <span v-else>☀️ 切换至日间模式</span>
+        </button>
+    </aside>
+
+    <section class="main">
+        <header class="topbar">
+            <div>
+                <div class="page-title">{{ currentNav.label }}</div>
+                <div class="page-desc">{{ currentNav.desc }}</div>
+            </div>
+            <div class="topbar-actions">
+                <button class="btn-refresh" :class="{spinning: isRefreshing}" @click="refreshData">
+                    <span class="icon">↻</span> 数据刷新
+                </button>
+                <div class="status-pill">
+                    <span style="width:8px;height:8px;background:#10b981;border-radius:50%;display:inline-block;animation: pulse 2s infinite;"></span>
+                    数据服务 {{ apiStatus }}
+                </div>
+            </div>
+        </header>
+
+        <main class="content">
+            <!-- Dashboard Tab -->
+            <section v-show="activeTab === 'dashboard'" class="animate-cascade">
+                <div class="hero">
+                    <div>
+                        <h2>从房源数据里<br/>看清重庆二手房市场结构</h2>
+                        <p>系统围绕重庆二手房源的区域分布、价格区间、面积结构和小区差异进行深度挖掘，借助可视化手段助您快速掌握市场脉络。</p>
+                        <div class="hero-actions">
+                            <span class="badge">样本量 <count-up :value="stats.total"></count-up> 条</span>
+                            <span class="badge" style="color:var(--teal);border-color:var(--teal);">区域智能对比</span>
+                            <span class="badge" style="color:var(--gold);border-color:var(--gold);">高级散点洞察</span>
+                        </div>
+                    </div>
+                    <div class="insight-box">
+                        <div class="insight-label">全市平均单价估算</div>
+                        <div class="insight-value"><count-up :value="stats.avg_unit_price" :decimals="2"></count-up> 元/㎡</div>
+                        <p style="color:var(--muted); font-size:14px; margin-top:16px;">
+                            平均总价 <b><count-up :value="stats.avg_total_price" :decimals="2"></count-up></b> 万，<br>
+                            平均面积 <b><count-up :value="stats.avg_area" :decimals="2"></count-up></b> ㎡。<br>
+                            <span style="font-size:12px;opacity:0.8;">可作为观察整体市场价格水平的核心基准。</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid-metrics">
+                    <div class="metric"><div class="metric-label">有效数据总量</div><div class="metric-value"><count-up :value="stats.total"></count-up></div><div class="metric-foot">清洗后可分析的房源记录</div></div>
+                    <div class="metric"><div class="metric-label">市场平均总价</div><div class="metric-value"><count-up :value="stats.avg_total_price" :decimals="2"></count-up> 万</div><div class="metric-foot">所有在售房源总价加权均值</div></div>
+                    <div class="metric"><div class="metric-label">市场平均单价</div><div class="metric-value"><count-up :value="stats.avg_unit_price" :decimals="2"></count-up></div><div class="metric-foot">元 / 平方米</div></div>
+                    <div class="metric"><div class="metric-label">套均面积</div><div class="metric-value"><count-up :value="stats.avg_area" :decimals="2"></count-up> ㎡</div><div class="metric-foot">反映主流户型空间大小</div></div>
+                </div>
+
+                <div class="section-grid">
+                    <div class="panel"><div class="panel-head"><div><div class="panel-title">区域均价排行</div><div class="panel-sub">直观对比各区域房价梯度与高地</div></div></div><div id="districtChart" class="chart"></div></div>
+                    <div class="panel"><div class="panel-head"><div><div class="panel-title">总价分布结构</div><div class="panel-sub">快速判断当前市场主流房源价格带</div></div></div><div id="priceDistChart" class="chart"></div></div>
+                    <div class="panel wide"><div class="panel-head"><div><div class="panel-title">面积与总价关系透视 (支持缩放)</div><div class="panel-sub">揭示面积和总价的正相关趋势及离散度，利用下方滑块探索局部细节</div></div></div><div id="scatterChart" class="chart" style="height:420px;"></div></div>
+                    <div class="panel"><div class="panel-head"><div><div class="panel-title">高价值小区 Top10</div><div class="panel-sub">识别市场头部资源和高溢价楼盘</div></div></div><div id="topCommunityChart" class="chart"></div></div>
+                    <div class="panel"><div class="panel-head"><div><div class="panel-title">房源类型智能聚类</div><div class="panel-sub">基于 KMeans 算法降维划分三大典型类别</div></div></div>
+                        <el-table :data="clusterData" style="width:100%">
+                            <el-table-column prop="type" label="类型定位"><template #default="scope"><span style="font-weight:700;color:var(--brand);">{{ scope.row.type }}</span></template></el-table-column>
+                            <el-table-column prop="count" label="样本数" width="80"></el-table-column>
+                            <el-table-column prop="avg_total_price" label="均总价" width="80"></el-table-column>
+                            <el-table-column prop="avg_area" label="均面积" width="80"></el-table-column>
+                        </el-table>
+                    </div>
+                    <div class="panel wide"><div class="panel-head"><div><div class="panel-title">房龄对单价的影响趋势</div><div class="panel-sub">建成年份分组后的单价变化走势与存量分布 (附带 DataZoom 功能)</div></div></div><div id="yearChart" class="chart" style="height:400px;"></div></div>
+                </div>
+            </section>
+
+            <!-- Search Tab -->
+            <section v-show="activeTab === 'search'" class="animate-cascade">
+                <div class="panel mb-6">
+                    <div class="panel-head"><div><div class="panel-title">高级房源检索台</div><div class="panel-sub">按多维度精准过滤，并支持全量导出CSV文件供本地研究</div></div></div>
+                    <el-form :inline="true" :model="filters" class="toolbar">
+                        <el-form-item label="区域"><el-select v-model="filters.district" clearable placeholder="全部区域" style="width:140px"><el-option v-for="d in options.districts" :key="d" :label="d" :value="d" /></el-select></el-form-item>
+                        <el-form-item label="户型"><el-select v-model="filters.layout" clearable placeholder="全部户型" style="width:130px"><el-option v-for="l in options.layouts" :key="l" :label="l" :value="l" /></el-select></el-form-item>
+                        <el-form-item label="小区"><el-input v-model="filters.keyword" clearable placeholder="输入关键字" style="width:160px" /></el-form-item>
+                        <el-form-item label="总价范围"><el-input-number v-model="filters.min_price" :min="0" :step="10" placeholder="最低" style="width:90px" /> - <el-input-number v-model="filters.max_price" :min="0" :step="10" placeholder="最高" style="width:90px" /></el-form-item>
+                        <el-form-item label="面积范围"><el-input-number v-model="filters.min_area" :min="0" :step="10" placeholder="最小" style="width:90px" /> - <el-input-number v-model="filters.max_area" :min="0" :step="10" placeholder="最大" style="width:90px" /></el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="applySearch">检索</el-button>
+                            <el-button @click="resetSearch">重置</el-button>
+                            <el-button type="success" @click="exportFullCsv" plain>全量导出 CSV</el-button>
+                        </el-form-item>
+                    </el-form>
+                </div>
+                <div class="grid-metrics">
+                    <div class="metric"><div class="metric-label">检索结果数量</div><div class="metric-value" style="color:var(--brand)"><count-up :value="filteredStats.total"></count-up></div><div class="metric-foot">当前条件下的记录</div></div>
+                    <div class="metric"><div class="metric-label">结果均价</div><div class="metric-value"><count-up :value="filteredStats.avg_unit_price" :decimals="2"></count-up></div><div class="metric-foot">元/平方米</div></div>
+                    <div class="metric"><div class="metric-label">结果最低总价</div><div class="metric-value"><count-up :value="filteredStats.min_total_price" :decimals="2"></count-up> 万</div><div class="metric-foot">极值参考</div></div>
+                    <div class="metric"><div class="metric-label">结果最高总价</div><div class="metric-value"><count-up :value="filteredStats.max_total_price" :decimals="2"></count-up> 万</div><div class="metric-foot">极值参考</div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-head"><div><div class="panel-title">房源数据明细</div><div class="panel-sub">支持分页查看检索结果详情</div></div></div>
+                    <el-table :data="tableData" style="width:100%" v-loading="loading" height="560" stripe>
+                        <el-table-column prop="community" label="小区名称" width="200" fixed show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="district" label="区域" width="100"></el-table-column>
+                        <el-table-column prop="layout" label="户型" width="110"></el-table-column>
+                        <el-table-column prop="area" label="面积(㎡)" width="100"></el-table-column>
+                        <el-table-column prop="total_price" label="总价(万)" width="120"><template #default="scope"><span style="color:var(--gold);font-weight:700">{{ scope.row.total_price }}</span></template></el-table-column>
+                        <el-table-column prop="unit_price" label="单价(元/㎡)" width="125"></el-table-column>
+                        <el-table-column prop="floor" label="楼层" width="150" show-overflow-tooltip></el-table-column>
+                        <el-table-column prop="year" label="建成年份" width="100"></el-table-column>
+                    </el-table>
+                    <div class="mt-6 flex justify-end"><el-pagination background layout="total, prev, pager, next, jumper" :total="totalData" :page-size="20" v-model:current-page="currentPage" @current-change="fetchTableData" /></div>
+                </div>
+            </section>
+
+            <!-- Compare Tab -->
+            <section v-show="activeTab === 'compare'" class="animate-cascade">
+                <div class="section-grid">
+                    <div class="panel"><div class="panel-head"><div><div class="panel-title">各区域存量房源规模</div><div class="panel-sub">对比不同区域挂牌数量差异</div></div></div><div id="districtCountChart" class="chart"></div></div>
+                    <div class="panel"><div class="panel-head"><div><div class="panel-title">区域总价与面积多维雷达</div><div class="panel-sub">综合评估区域购房成本与空间大小</div></div></div><div id="districtRadarChart" class="chart"></div></div>
+                    <div class="panel wide">
+                        <div class="panel-head"><div><div class="panel-title">区域核心指标综合对比表</div><div class="panel-sub">全面掌握各区量价数据</div></div></div>
+                        <el-table :data="districtCompare" style="width:100%" size="large" :default-sort="{prop: 'avg_unit_price', order: 'descending'}">
+                            <el-table-column prop="district" label="区域" width="150" sortable></el-table-column>
+                            <el-table-column prop="count" label="房源数量(套)" sortable></el-table-column>
+                            <el-table-column prop="avg_total_price" label="平均总价(万)" sortable></el-table-column>
+                            <el-table-column prop="avg_unit_price" label="平均单价(元/㎡)" sortable></el-table-column>
+                            <el-table-column prop="avg_area" label="平均面积(㎡)" sortable></el-table-column>
+                        </el-table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tools Tab -->
+            <section v-show="activeTab === 'tools'" class="animate-cascade">
+                <div class="tool-grid">
+                    <div class="panel">
+                        <div class="panel-head"><div><div class="panel-title">智能购房推荐助手</div><div class="panel-sub">基于您的预算和需求，快速筛选最具性价比的优质房源。</div></div></div>
+                        <el-form :model="recommendForm" label-width="90px" size="large" class="mt-6">
+                            <el-form-item label="预算上限"><el-input-number v-model="recommendForm.budget" :min="10" :max="3000" :step="10" style="width:100%" /> <span class="ml-2">万元</span></el-form-item>
+                            <el-form-item label="面积底线"><el-input-number v-model="recommendForm.min_area" :min="20" :max="500" :step="5" style="width:100%" /> <span class="ml-2">平方米</span></el-form-item>
+                            <el-form-item label="意向区域"><el-select v-model="recommendForm.district" clearable placeholder="不限区域" style="width:100%"><el-option v-for="d in options.districts" :key="d" :label="d" :value="d" /></el-select></el-form-item>
+                            <el-form-item label="期望户型"><el-select v-model="recommendForm.layout" clearable placeholder="不限户型" style="width:100%"><el-option v-for="l in options.layouts" :key="l" :label="l" :value="l" /></el-select></el-form-item>
+                            <el-form-item class="mt-8"><el-button type="primary" @click="fetchRecommendations" style="width:100%;font-weight:700;">生成定制推荐</el-button></el-form-item>
+                        </el-form>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-head"><div><div class="panel-title">推荐房源结果</div><div class="panel-sub">为您找到的最佳匹配</div></div></div>
+                        <el-table :data="recommendations" height="420" style="width:100%" stripe>
+                            <el-table-column prop="community" label="小区名称" width="160" show-overflow-tooltip></el-table-column>
+                            <el-table-column prop="district" label="区域" width="90"></el-table-column>
+                            <el-table-column prop="total_price" label="总价(万)" width="90"><template #default="scope"><span style="color:var(--brand);font-weight:700">{{ scope.row.total_price }}</span></template></el-table-column>
+                            <el-table-column prop="area" label="面积(㎡)" width="90"></el-table-column>
+                            <el-table-column prop="layout" label="户型" width="100"></el-table-column>
+                        </el-table>
+                    </div>
+                    <div class="panel wide">
+                        <div class="panel-head"><div><div class="panel-title">房产估价计算器</div><div class="panel-sub">基于市场大数据的快速估值模型，辅助您判断价格合理区间</div></div></div>
+                        <div class="tool-grid" style="grid-template-columns: 1fr 1fr; align-items: start;">
+                            <el-form :model="estimateForm" label-width="90px" size="large">
+                                <el-form-item label="所在区域"><el-select v-model="estimateForm.district" placeholder="请选择区域" style="width:100%"><el-option v-for="d in options.districts" :key="d" :label="d" :value="d" /></el-select></el-form-item>
+                                <el-form-item label="房屋面积"><el-input-number v-model="estimateForm.area" :min="20" :max="500" :step="5" style="width:100%" /> <span class="ml-2">平方米</span></el-form-item>
+                                <el-form-item label="户型结构"><el-select v-model="estimateForm.layout" clearable placeholder="可选项，提升精度" style="width:100%"><el-option v-for="l in options.layouts" :key="l" :label="l" :value="l" /></el-select></el-form-item>
+                                <el-form-item><el-button type="primary" @click="estimatePrice" style="width:100%;font-weight:700;">立即评估价格</el-button></el-form-item>
+                            </el-form>
+                            <div v-if="estimateResult">
+                                <div class="insight-box" style="box-shadow:none;">
+                                    <div class="insight-label text-center">系统估算合理总价</div>
+                                    <div class="insight-value text-center" style="font-size: 42px; margin: 16px 0;">{{ estimateResult.estimated_total_price }} 万</div>
+                                    <div class="flex justify-between mt-6 pt-6 border-t border-slate-200" style="border-color: var(--line)">
+                                        <div class="text-center"><div class="insight-label mb-1">估算单价</div><div style="color:var(--ink); font-weight:700; font-size:18px;">{{ estimateResult.estimated_unit_price }} 元/㎡</div></div>
+                                        <div class="text-center"><div class="insight-label mb-1">参考偏低区间</div><div style="color:var(--teal); font-weight:700; font-size:18px;">{{ estimateResult.low_total_price }} 万</div></div>
+                                        <div class="text-center"><div class="insight-label mb-1">参考偏高区间</div><div style="color:var(--red); font-weight:700; font-size:18px;">{{ estimateResult.high_total_price }} 万</div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Outliers Tab -->
+            <section v-show="activeTab === 'outliers'" class="animate-cascade">
+                <div class="panel mb-6">
+                    <div class="panel-head"><div><div class="panel-title">价格异常房源空间分布</div><div class="panel-sub">基于 IQR 算法识别出的偏离常规市场价格带的房源（支持框选放大查看细节）</div></div></div>
+                    <div id="outlierScatterChart" class="chart" style="height:480px;"></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-head"><div><div class="panel-title">异常房源数据表</div><div class="panel-sub">挖掘潜在的“捡漏”机会或标价过高的记录</div></div></div>
+                    <el-table :data="outlierItems" style="width:100%" stripe>
+                        <el-table-column prop="community" label="小区名称" width="200"></el-table-column>
+                        <el-table-column prop="district" label="所属区域" width="120"></el-table-column>
+                        <el-table-column prop="layout" label="户型结构" width="120"></el-table-column>
+                        <el-table-column prop="area" label="建筑面积(㎡)" width="120"></el-table-column>
+                        <el-table-column prop="total_price" label="挂牌总价(万)" width="120"></el-table-column>
+                        <el-table-column prop="unit_price" label="折算单价(元/㎡)">
+                            <template #default="scope">
+                                <span style="color:var(--red);font-weight:700">{{ scope.row.unit_price }}</span>
+                                <el-tag size="small" type="danger" effect="plain" class="ml-2">异常</el-tag>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </section>
+        </main>
+    </section>
+</div>
+
+<script>
+const { createApp, ref, computed, onMounted, nextTick } = Vue;
+const styleEl = document.createElement('style');
+styleEl.innerHTML = `@keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16,185,129, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16,185,129, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16,185,129, 0); } }`;
+document.head.appendChild(styleEl);
+
+// 提取一个动画数字组件
+const CountUp = {
+    props: { value: {type: Number, default: 0}, decimals: {type: Number, default: 0} },
+    setup(props) {
+        const display = ref(0);
+        Vue.watch(() => props.value, (newVal) => {
+            let start = display.value;
+            let end = newVal;
+            if(start === end) return;
+            let startTime = null;
+            const tick = (now) => {
+                if(!startTime) startTime = now;
+                let progress = Math.min((now - startTime) / 800, 1);
+                // easeOutQuart
+                let ease = 1 - Math.pow(1 - progress, 4);
+                display.value = start + (end - start) * ease;
+                if (progress < 1) requestAnimationFrame(tick);
+                else display.value = end;
+            };
+            requestAnimationFrame(tick);
+        }, { immediate: true });
+        return { display };
+    },
+    template: `<span>{{ display.toFixed(decimals) }}</span>`
+};
+
+createApp({
+    components: { CountUp },
+    setup() {
+        // Detect if running on GitHub Pages (static mode)
+        const isStaticMode = window.location.hostname.includes('github.io');
+        const API_BASE = isStaticMode ? './mock_api' : 'http://127.0.0.1:8000/api';
+        
+        if (isStaticMode) {
+            // In static mode, append .json to all API calls and ignore query parameters
+            axios.interceptors.request.use(config => {
+                if (config.url.startsWith('./mock_api')) {
+                    config.url = config.url.split('?')[0] + '.json';
+                }
+                return config;
+            });
+        }
+
+        const navItems = [
+            { name: 'dashboard', label: '综合看板', desc: '市场核心指标、价格分布、智能聚类和趋势分析' },
+            { name: 'search', label: '数据检索', desc: '多条件组合检索房源，支持全量导出CSV' },
+            { name: 'compare', label: '区域对比', desc: '横向对比各区市场规模、均价与特征' },
+            { name: 'tools', label: '推荐与估价', desc: '基于预算智能推荐房源，提供价格评估模型' },
+            { name: 'outliers', label: '异常检测', desc: '利用算法自动识别严重偏离均价的房源' },
+        ];
+        const activeTab = ref('dashboard');
+        const currentNav = computed(() => navItems.find(i => i.name === activeTab.value) || navItems[0]);
+        const apiStatus = ref('连接中');
+        const isRefreshing = ref(false);
+        const isDark = ref(localStorage.getItem('theme') === 'dark');
+
+        const stats = ref({ total: 0, avg_total_price: 0, avg_unit_price: 0, avg_area: 0 });
+        const filteredStats = ref({ total: 0, avg_unit_price: 0, min_total_price: 0, max_total_price: 0 });
+        const options = ref({ districts: [], layouts: [] });
+        const clusterData = ref([]);
+        const outlierCount = ref(0);
+        const outlierItems = ref([]);
+        const normalScatterData = ref([]); 
+        const tableData = ref([]);
+        const totalData = ref(0);
+        const currentPage = ref(1);
+        const loading = ref(false);
+        const districtCompare = ref([]);
+        const recommendations = ref([]);
+        const estimateResult = ref(null);
+        const filters = ref({ district: '', layout: '', keyword: '', min_price: null, max_price: null, min_area: null, max_area: null });
+        const recommendForm = ref({ budget: 150, min_area: 80, district: '', layout: '' });
+        const estimateForm = ref({ district: '', area: 90, layout: '' });
+        let charts = {};
+        let resizeBound = false;
+
+        const paramsFrom = obj => Object.fromEntries(Object.entries(obj).filter(([_, v]) => v !== '' && v !== null && v !== undefined));
+        
+        // 动态读取当前主题下的图表文字颜色
+        const getChartTextColor = () => isDark.value ? '#94a3b8' : '#475569';
+        const getChartLineColor = () => isDark.value ? '#334155' : '#cbd5e1';
+
+        const initCharts = () => {
+            const chartIds = ['districtChart','priceDistChart','scatterChart','topCommunityChart','yearChart','districtCountChart','districtRadarChart','outlierScatterChart'];
+            const theme = isDark.value ? 'dark' : null;
+            chartIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el || el.clientWidth === 0 || el.clientHeight === 0) return;
+                // 若已存在且主题改变，需要销毁重建以适配Echarts自带的深色主题
+                if (charts[id]) {
+                    // Check if we need to switch theme
+                    const currentTheme = charts[id].getOption()?.backgroundColor ? 'dark' : 'light';
+                    // Echarts dark theme background is #100C2A normally, we override it
+                }
+                
+                if (charts[id]) charts[id].dispose();
+                charts[id] = echarts.init(el, theme);
+                charts[id].resize();
+            });
+            if (!resizeBound) {
+                window.addEventListener('resize', () => Object.values(charts).forEach(c => c.resize()));
+                resizeBound = true;
+            }
+        };
+
+        const toggleTheme = () => {
+            isDark.value = !isDark.value;
+            localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
+            if (isDark.value) document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
+            // Re-render all charts
+            initCharts();
+            if(activeTab.value === 'dashboard') fetchDashboard();
+            if(activeTab.value === 'compare') fetchCompare();
+            if(activeTab.value === 'outliers') renderOutlierChart();
+        };
+
+        const refreshData = async () => {
+            if(isRefreshing.value) return;
+            isRefreshing.value = true;
+            try {
+                await Promise.all([fetchStats(), fetchFilteredStats(), fetchDashboard(), fetchTableData(1), fetchRecommendations()]);
+                ElementPlus.ElMessage.success('数据已成功刷新');
+            } catch (e) {
+                ElementPlus.ElMessage.error('刷新失败');
+            } finally {
+                isRefreshing.value = false;
+            }
+        };
+
+        const fetchOptions = async () => {
+            const res = await axios.get(`${API_BASE}/filter_options`);
+            options.value = res.data.data;
+            if (!estimateForm.value.district && options.value.districts.length) estimateForm.value.district = options.value.districts[0];
+        };
+        const fetchStats = async () => { const res = await axios.get(`${API_BASE}/stats`); stats.value = res.data.data; apiStatus.value = '正常'; };
+        const fetchFilteredStats = async () => { const res = await axios.get(`${API_BASE}/filtered_stats`, { params: paramsFrom(filters.value) }); filteredStats.value = res.data.data; };
+        
+        const fetchDashboard = async () => {
+            // Re-check charts init in case of theme switch
+            initCharts();
+            const [districtRes, distRes, scatterRes, topRes, yearRes, clusterRes, outlierRes] = await Promise.all([
+                axios.get(`${API_BASE}/avg_price_by_district`), 
+                axios.get(`${API_BASE}/price_distribution`), 
+                axios.get(`${API_BASE}/price_area_relation`), 
+                axios.get(`${API_BASE}/top_communities`), 
+                axios.get(`${API_BASE}/price_by_year`), 
+                axios.get(`${API_BASE}/cluster_summary`), 
+                axios.get(`${API_BASE}/outliers`)
+            ]);
+            
+            const txtCol = getChartTextColor();
+            const lineCol = getChartLineColor();
+            const bgCol = isDark.value ? 'transparent' : 'transparent';
+
+            const districtData = districtRes.data.data;
+            charts.districtChart?.setOption({ 
+                backgroundColor: bgCol,
+                tooltip:{trigger:'axis'}, 
+                toolbox: { feature: { saveAsImage: { name: '区域均价' } } },
+                grid:{left:55,right:20,bottom:40,top:40}, 
+                xAxis:{type:'category',data:districtData.map(i=>i.district), axisLine:{lineStyle:{color:lineCol}}, axisLabel:{color:txtCol, fontWeight:500}}, 
+                yAxis:{type:'value', axisLine:{show:false}, splitLine:{lineStyle:{color:lineCol, type:'dashed'}}, axisLabel:{color:txtCol}}, 
+                series:[{
+                    type:'bar',
+                    data:districtData.map(i=>i.avg_price), 
+                    barWidth: '45%',
+                    itemStyle:{
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{offset: 0, color: '#6366f1'}, {offset: 1, color: '#3b82f6'}]),
+                        borderRadius: [4, 4, 0, 0]
+                    }, 
+                    label:{show:true,position:'top', color: isDark.value ? '#a5b4fc' : '#312e81', fontWeight:700, fontSize:11, formatter:'{c}'}
+                }] 
+            });
+
+            charts.priceDistChart?.setOption({ 
+                backgroundColor: bgCol,
+                tooltip:{trigger:'item', formatter: '{b}: {c} 套 ({d}%)'}, 
+                legend:{left:'center', bottom:0, textStyle:{color:txtCol}}, 
+                series:[{
+                    type:'pie',
+                    radius:['40%','65%'],
+                    center:['50%','45%'],
+                    itemStyle: { borderRadius: 6, borderColor: isDark.value ? '#1e293b' : '#fff', borderWidth: 2 },
+                    label: { show:false },
+                    color: ['#4f46e5', '#0ea5e9', '#10b981', '#f59e0b', '#f43f5e'],
+                    data:distRes.data.data
+                }] 
+            });
+            
+            normalScatterData.value = scatterRes.data.data;
+            charts.scatterChart?.setOption({ 
+                backgroundColor: bgCol,
+                tooltip:{trigger:'item', formatter: p => `面积: ${p.data[0]}㎡<br>总价: ${p.data[1]}万`}, 
+                toolbox: { feature: { dataZoom: { yAxisIndex: 'none' }, restore: {}, saveAsImage: {} } },
+                dataZoom: [{ type: 'inside', xAxisIndex: 0, filterMode: 'filter' }, { type: 'slider', xAxisIndex: 0, filterMode: 'empty' }],
+                grid:{left:55,right:25,bottom:75,top:45}, 
+                xAxis:{type:'value',name:'面积(㎡)', nameTextStyle:{color:txtCol}, axisLine:{lineStyle:{color:lineCol}}, splitLine:{show:false}, axisLabel:{color:txtCol}}, 
+                yAxis:{type:'value',name:'总价(万)', nameTextStyle:{color:txtCol}, axisLine:{show:false}, splitLine:{lineStyle:{color:lineCol, type:'dashed'}}, axisLabel:{color:txtCol}}, 
+                series:[{
+                    type:'scatter',
+                    symbolSize: 6,
+                    data:scatterRes.data.data,
+                    itemStyle:{color: new echarts.graphic.RadialGradient(0.5, 0.5, 0.5, [{offset: 0, color: '#0ea5e9'}, {offset: 1, color: '#0284c7'}]), opacity: 0.6}
+                }] 
+            });
+
+            const top = topRes.data.data.reverse();
+            charts.topCommunityChart?.setOption({ 
+                backgroundColor: bgCol,
+                tooltip:{trigger:'axis'}, 
+                grid:{left:120,right:55,bottom:30,top:20}, 
+                xAxis:{type:'value', show:false}, 
+                yAxis:{type:'category',data:top.map(i=>i.community), axisLine:{show:false}, axisTick:{show:false}, axisLabel:{color:txtCol, fontWeight:600}}, 
+                series:[{
+                    type:'bar',
+                    data:top.map(i=>i.avg_price),
+                    barWidth: '50%',
+                    itemStyle:{
+                        color: new echarts.graphic.LinearGradient(1, 0, 0, 0, [{offset: 0, color: '#f59e0b'}, {offset: 1, color: '#d97706'}]),
+                        borderRadius: [0, 4, 4, 0]
+                    },
+                    label:{show:true,position:'right', color: isDark.value ? '#fbbf24' : '#b45309', fontWeight:700, formatter:'{c}'}
+                }] 
+            });
+
+            const year = yearRes.data.data;
+            charts.yearChart?.setOption({ 
+                backgroundColor: bgCol,
+                tooltip:{trigger:'axis', axisPointer:{type:'cross'}}, 
+                legend:{top:10, right:20, textStyle:{color:txtCol}}, 
+                toolbox: { feature: { dataZoom: { yAxisIndex: 'none' }, restore: {}, saveAsImage: {} } },
+                dataZoom: [{ type: 'inside' }, { type: 'slider', bottom: 5 }],
+                grid:{left:60,right:60,bottom:60,top:60}, 
+                xAxis:{type:'category',data:year.map(i=>i.year_group), boundaryGap:true, axisLine:{lineStyle:{color:lineCol}}, axisLabel:{color:txtCol}}, 
+                yAxis:[
+                    {type:'value',name:'单价 (元/㎡)', nameTextStyle:{color:txtCol}, axisLine:{show:false}, splitLine:{lineStyle:{color:lineCol, type:'dashed'}}, axisLabel:{color:txtCol}},
+                    {type:'value',name:'房源数量 (套)', nameTextStyle:{color:txtCol}, axisLine:{show:false}, splitLine:{show:false}, axisLabel:{color:txtCol}}
+                ], 
+                series:[
+                    {
+                        name:'平均单价',
+                        type:'line',
+                        smooth:true,
+                        symbol: 'circle',
+                        symbolSize: 8,
+                        data:year.map(i=>i.avg_price),
+                        itemStyle:{color:'#8b5cf6', borderWidth:2, borderColor: isDark.value ? '#1e293b' : '#fff'},
+                        lineStyle:{width:3, color:'#8b5cf6'},
+                        areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{offset: 0, color: 'rgba(139,92,246,0.3)'}, {offset: 1, color: 'rgba(139,92,246,0)'}]) }
+                    },
+                    {
+                        name:'房源数量',
+                        type:'bar',
+                        yAxisIndex:1,
+                        barWidth: '30%',
+                        data:year.map(i=>i.count),
+                        itemStyle:{
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{offset: 0, color: '#94a3b8'}, {offset: 1, color: '#64748b'}]),
+                            borderRadius: [4, 4, 0, 0],
+                            opacity: 0.6
+                        }
+                    }
+                ] 
+            });
+
+            clusterData.value = clusterRes.data.data;
+            outlierCount.value = outlierRes.data.data.count;
+            outlierItems.value = outlierRes.data.data.items;
+        };
+
+        const renderOutlierChart = () => {
+            initCharts();
+            if(!charts.outlierScatterChart) return;
+            const bgCol = isDark.value ? 'transparent' : 'transparent';
+            const txtCol = getChartTextColor();
+            const lineCol = getChartLineColor();
+
+            const normalPoints = normalScatterData.value.map(p => ({value: p, itemStyle: {color: isDark.value ? '#475569' : '#cbd5e1', opacity: 0.4}}));
+            const outlierPoints = outlierItems.value.map(item => ({
+                value: [item.area, item.total_price, item.unit_price, item.community], 
+                itemStyle: {color: '#e11d48', opacity: 0.9}
+            }));
+            
+            charts.outlierScatterChart.setOption({
+                backgroundColor: bgCol,
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function(params) {
+                        if (params.data.value.length > 2) {
+                            return `<b>${params.data.value[3]} (异常)</b><br>面积: ${params.data.value[0]}㎡<br>总价: ${params.data.value[1]}万<br>单价: <span style="color:#e11d48">${params.data.value[2]}</span>元/㎡`;
+                        }
+                        return `常规样本<br>面积: ${params.data.value[0]}㎡<br>总价: ${params.data.value[1]}万`;
+                    }
+                },
+                toolbox: { feature: { dataZoom: {}, restore: {}, saveAsImage: {} } },
+                dataZoom: [{ type: 'inside' }, { type: 'slider', bottom: 5 }],
+                grid: {left: 60, right: 30, bottom: 65, top: 40},
+                xAxis: { type: 'value', name: '面积(㎡)', nameTextStyle:{color:txtCol}, axisLine:{lineStyle:{color:lineCol}}, splitLine: {show: false}, axisLabel:{color:txtCol} },
+                yAxis: { type: 'value', name: '总价(万)', nameTextStyle:{color:txtCol}, axisLine:{show:false}, splitLine: {lineStyle: {color:lineCol, type: 'dashed'}}, axisLabel:{color:txtCol} },
+                series: [{
+                    name: '分布',
+                    type: 'scatter',
+                    symbolSize: function(data) { return data.length > 2 ? 10 : 5; },
+                    data: [...normalPoints, ...outlierPoints]
+                }]
+            });
+        };
+
+        const fetchTableData = async (page = currentPage.value) => {
+            loading.value = true; currentPage.value = page;
+            try {
+                const res = await axios.get(`${API_BASE}/raw_data`, { params: { page, ...paramsFrom(filters.value) } });
+                tableData.value = res.data.data.items; totalData.value = res.data.data.total;
+            } finally { loading.value = false; }
+        };
+
+        const applySearch = async () => { currentPage.value = 1; await Promise.all([fetchFilteredStats(), fetchTableData(1)]); };
+        const resetSearch = async () => { filters.value = { district:'', layout:'', keyword:'', min_price:null, max_price:null, min_area:null, max_area:null }; await applySearch(); };
+        
+        const exportFullCsv = () => {
+            if (isStaticMode) return ElementPlus.ElMessage.warning('静态演示模式下不支持数据导出');
+            const urlParams = new URLSearchParams(paramsFrom(filters.value)).toString();
+            window.location.href = `${API_BASE}/export_csv?${urlParams}`;
+            ElementPlus.ElMessage.success('正在为您生成并下载全量数据CSV文件...');
+        };
+
+        const fetchCompare = async () => {
+            const res = await axios.get(`${API_BASE}/district_compare`);
+            districtCompare.value = res.data.data;
+            await nextTick(); initCharts();
+            const bgCol = isDark.value ? 'transparent' : 'transparent';
+            const txtCol = getChartTextColor();
+            const lineCol = getChartLineColor();
+            
+            const d = districtCompare.value;
+            charts.districtCountChart?.setOption({ 
+                backgroundColor: bgCol,
+                tooltip:{trigger:'axis'}, 
+                toolbox: { feature: { saveAsImage: {} } },
+                grid:{left:55,right:25,bottom:45,top:40}, 
+                xAxis:{type:'category',data:d.map(i=>i.district), axisLabel:{color:txtCol}, axisLine:{lineStyle:{color:lineCol}}}, 
+                yAxis:{type:'value', axisLine:{show:false}, splitLine:{lineStyle:{color:lineCol, type:'dashed'}}, axisLabel:{color:txtCol}}, 
+                series:[{
+                    type:'bar',
+                    data:d.map(i=>i.count),
+                    barWidth: '40%',
+                    itemStyle:{
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{offset: 0, color: '#0ea5e9'}, {offset: 1, color: '#0369a1'}]),
+                        borderRadius: [4, 4, 0, 0]
+                    },
+                    label: {show:true, position:'top', color: isDark.value ? '#38bdf8' : '#075985', fontWeight: 600}
+                }] 
+            });
+            charts.districtRadarChart?.setOption({ 
+                backgroundColor: bgCol,
+                tooltip:{}, 
+                legend:{bottom:0, textStyle:{color:txtCol}}, 
+                toolbox: { feature: { saveAsImage: {} } },
+                radar:{
+                    indicator:d.map(i=>({name:i.district,max:Math.max(...d.map(x=>x.avg_total_price))*1.1})),
+                    splitArea: { areaStyle: { color: isDark.value ? ['rgba(51, 65, 85, 0.4)', 'rgba(51, 65, 85, 0.1)'] : ['rgba(241, 245, 249, 0.4)', 'rgba(241, 245, 249, 0.1)'] } },
+                    axisLine: { lineStyle: { color: lineCol } },
+                    splitLine: { lineStyle: { color: lineCol } },
+                    axisName: { color: txtCol }
+                }, 
+                series:[{
+                    type:'radar',
+                    data:[
+                        {
+                            name:'平均总价',
+                            value:d.map(i=>i.avg_total_price),
+                            itemStyle: {color: '#4f46e5'},
+                            areaStyle: {color: 'rgba(79, 70, 229, 0.3)'}
+                        },
+                        {
+                            name:'平均面积',
+                            value:d.map(i=>i.avg_area),
+                            itemStyle: {color: '#10b981'},
+                            areaStyle: {color: 'rgba(16, 185, 129, 0.3)'}
+                        }
+                    ]
+                }] 
+            });
+        };
+
+        const fetchRecommendations = async () => { 
+            const res = await axios.get(`${API_BASE}/recommendations`, { params: paramsFrom(recommendForm.value) }); 
+            recommendations.value = res.data.data; 
+        };
+        const estimatePrice = async () => { 
+            if (isStaticMode) return ElementPlus.ElMessage.warning('静态演示模式下无法进行实时估价计算');
+            if (!estimateForm.value.district) return ElementPlus.ElMessage.warning('请先选择需要评估的区域'); 
+            const res = await axios.get(`${API_BASE}/estimate_price`, { params: paramsFrom(estimateForm.value) }); 
+            estimateResult.value = res.data.data; 
+        };
+
+        const switchTab = async (name) => {
+            activeTab.value = name;
+            await nextTick(); 
+            if (name === 'compare') await fetchCompare(); 
+            else if (name === 'outliers') renderOutlierChart();
+            else if (name === 'dashboard') initCharts();
+        };
+
+        onMounted(async () => {
+            if(isDark.value) document.documentElement.classList.add('dark');
+            try {
+                initCharts();
+                await fetchOptions();
+                await refreshData();
+            } catch (e) { 
+                console.error(e); 
+                apiStatus.value = '连接异常'; 
+                ElementPlus.ElMessage.error('数据服务连接失败，请确保后台服务已启动'); 
+            }
+        });
+        
+        return { navItems, activeTab, currentNav, apiStatus, isRefreshing, isDark, stats, filteredStats, options, clusterData, outlierCount, outlierItems, tableData, totalData, currentPage, loading, districtCompare, recommendations, estimateResult, filters, recommendForm, estimateForm, fetchTableData, applySearch, resetSearch, exportFullCsv, fetchRecommendations, estimatePrice, switchTab, toggleTheme, refreshData };
+    }
+}).use(ElementPlus).mount('#app');
+</script>
+</body>
+</html>

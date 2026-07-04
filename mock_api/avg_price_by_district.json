@@ -1,0 +1,21 @@
+{
+  "status": "success",
+  "data": [
+    {
+      "district": "渝中区",
+      "avg_price": 16741.76
+    },
+    {
+      "district": "两江新区",
+      "avg_price": 13459.34
+    },
+    {
+      "district": "南岸区",
+      "avg_price": 13000.45
+    },
+    {
+      "district": "沙坪坝区",
+      "avg_price": 9975.71
+    }
+  ]
+}

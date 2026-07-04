@@ -1,0 +1,33 @@
+{
+  "status": "success",
+  "data": [
+    {
+      "district": "渝中区",
+      "count": 12319,
+      "avg_total_price": 286.85,
+      "avg_unit_price": 16741.76,
+      "avg_area": 152.84
+    },
+    {
+      "district": "两江新区",
+      "count": 14205,
+      "avg_total_price": 176.26,
+      "avg_unit_price": 13459.34,
+      "avg_area": 123.5
+    },
+    {
+      "district": "南岸区",
+      "count": 10872,
+      "avg_total_price": 199.63,
+      "avg_unit_price": 13000.45,
+      "avg_area": 128.75
+    },
+    {
+      "district": "沙坪坝区",
+      "count": 13062,
+      "avg_total_price": 112.79,
+      "avg_unit_price": 9975.71,
+      "avg_area": 109.88
+    }
+  ]
+}

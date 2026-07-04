@@ -1,0 +1,35 @@
+{
+  "status": "success",
+  "data": [
+    {
+      "year_group": "2000年前",
+      "avg_price": 13172.24,
+      "count": 612
+    },
+    {
+      "year_group": "2000-2004",
+      "avg_price": 13163.86,
+      "count": 1063
+    },
+    {
+      "year_group": "2005-2009",
+      "avg_price": 13341.67,
+      "count": 11390
+    },
+    {
+      "year_group": "2010-2014",
+      "avg_price": 13436.87,
+      "count": 11372
+    },
+    {
+      "year_group": "2015-2019",
+      "avg_price": 13171.28,
+      "count": 14020
+    },
+    {
+      "year_group": "2020年后",
+      "avg_price": 13131.72,
+      "count": 12001
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "status": "success",
+  "data": {
+    "total": 50458,
+    "avg_total_price": 191.87,
+    "avg_unit_price": 13260.04,
+    "avg_area": 128.27,
+    "latest_update": "2026-07-02 21:07:41"
+  }
+}

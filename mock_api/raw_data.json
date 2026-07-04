@@ -1,0 +1,229 @@
+{
+  "status": "success",
+  "data": {
+    "total": 50458,
+    "page": 1,
+    "items": [
+      {
+        "id": "aug_a12695b2-0058-419e-9f61-31a90b9889ac",
+        "community": "俊峰·山万里",
+        "district": "沙坪坝区",
+        "total_price": 222.18,
+        "unit_price": 22018.0,
+        "area": 100.91,
+        "layout": "4室2厅",
+        "floor": "中层",
+        "year": 2012
+      },
+      {
+        "id": "aug_179c6c0b-9004-4394-8165-7fb07466c161",
+        "community": "国浩18T",
+        "district": "渝中区",
+        "total_price": 227.11,
+        "unit_price": 20066.0,
+        "area": 113.18,
+        "layout": "1室1厅",
+        "floor": "中层",
+        "year": 2011
+      },
+      {
+        "id": "aug_e5ac3cf8-9e65-4a71-85ab-89698a2a7f02",
+        "community": "长嘉汇朗峯",
+        "district": "南岸区",
+        "total_price": 707.85,
+        "unit_price": 30427.0,
+        "area": 232.64,
+        "layout": "5室2厅",
+        "floor": "高层",
+        "year": 2016
+      },
+      {
+        "id": "aug_52fbead0-cbb9-404c-b410-058f4ed72ad4",
+        "community": "协信公馆",
+        "district": "渝中区",
+        "total_price": 216.64,
+        "unit_price": 14049.0,
+        "area": 154.2,
+        "layout": "3室2厅",
+        "floor": "高层",
+        "year": 2009
+      },
+      {
+        "id": "aug_fa56dbe5-502f-412a-9a93-ba50876314d3",
+        "community": "重庆融创文旅城御澜",
+        "district": "沙坪坝区",
+        "total_price": 68.35,
+        "unit_price": 6371.0,
+        "area": 107.29,
+        "layout": "3室2厅",
+        "floor": "低层",
+        "year": 2017
+      },
+      {
+        "id": "aug_3ded71a5-fa55-4272-bc6f-9f8a62104b68",
+        "community": "金科城幸福里",
+        "district": "两江新区",
+        "total_price": 90.65,
+        "unit_price": 9226.0,
+        "area": 98.25,
+        "layout": "3室2厅",
+        "floor": "高层",
+        "year": 2020
+      },
+      {
+        "id": "aug_9cc7f288-9eb5-4180-8cfa-fa4c76ed9ca1",
+        "community": "协信云栖谷",
+        "district": "渝中区",
+        "total_price": 107.91,
+        "unit_price": 8844.0,
+        "area": 122.01,
+        "layout": "3室2厅",
+        "floor": "高层",
+        "year": 2015
+      },
+      {
+        "id": "aug_aa098d3a-49ad-4ca6-83c7-1820a6fb455b",
+        "community": "寰宇天下观澜苑A区",
+        "district": "两江新区",
+        "total_price": 424.15,
+        "unit_price": 18204.0,
+        "area": 233.0,
+        "layout": "4室2厅",
+        "floor": "高层",
+        "year": 2017
+      },
+      {
+        "id": "aug_bac59bd4-023d-4363-94a4-00b803a860db",
+        "community": "和黄御峰四期尚城",
+        "district": "南岸区",
+        "total_price": 69.01,
+        "unit_price": 9105.0,
+        "area": 75.79,
+        "layout": "2室2厅",
+        "floor": "低层",
+        "year": 2020
+      },
+      {
+        "id": "aug_a8877d2e-eda8-44df-a9b2-b747f218d22e",
+        "community": "保利高尔夫华庭",
+        "district": "两江新区",
+        "total_price": 228.62,
+        "unit_price": 14923.0,
+        "area": 153.2,
+        "layout": "4室2厅",
+        "floor": "中层",
+        "year": 2009
+      },
+      {
+        "id": "aug_b86258db-afeb-40b5-947a-4bf19aae535c",
+        "community": "万科鹅岭峯",
+        "district": "渝中区",
+        "total_price": 978.9,
+        "unit_price": 25241.0,
+        "area": 387.82,
+        "layout": "8室2厅",
+        "floor": "中层",
+        "year": 2010
+      },
+      {
+        "id": "aug_085ac255-8115-47b7-816d-8717c823cd07",
+        "community": "国浩18T",
+        "district": "渝中区",
+        "total_price": 298.05,
+        "unit_price": 20919.0,
+        "area": 142.48,
+        "layout": "3室2厅",
+        "floor": "中层",
+        "year": 2016
+      },
+      {
+        "id": "aug_7ae99d84-54a6-491c-ab1c-f3459b30193d",
+        "community": "紫御江山御湾",
+        "district": "两江新区",
+        "total_price": 455.97,
+        "unit_price": 21646.0,
+        "area": 210.65,
+        "layout": "4室2厅",
+        "floor": "高层",
+        "year": 2020
+      },
+      {
+        "id": "aug_3bd1277c-0f61-454d-8123-32ead488e4e6",
+        "community": "融创玖御南滨",
+        "district": "南岸区",
+        "total_price": 100.37,
+        "unit_price": 10735.0,
+        "area": 93.5,
+        "layout": "3室2厅",
+        "floor": "中层",
+        "year": 2023
+      },
+      {
+        "id": "aug_7e9578b7-af05-4c56-87d0-4f1fdfa7cbd0",
+        "community": "金阳第一农场大学城",
+        "district": "沙坪坝区",
+        "total_price": 49.79,
+        "unit_price": 5482.0,
+        "area": 90.82,
+        "layout": "4室2厅",
+        "floor": "中层",
+        "year": 2020
+      },
+      {
+        "id": "aug_bac10ed1-9889-4d7f-b9f3-6fe3ff1066a9",
+        "community": "富力城新壹站",
+        "district": "沙坪坝区",
+        "total_price": 76.43,
+        "unit_price": 7992.0,
+        "area": 95.63,
+        "layout": "3室2厅",
+        "floor": "中层",
+        "year": 2015
+      },
+      {
+        "id": "aug_37b81a73-4243-4e26-819e-f4ae33380900",
+        "community": "渝能嘉湾壹号B组团",
+        "district": "两江新区",
+        "total_price": 72.99,
+        "unit_price": 8182.0,
+        "area": 89.21,
+        "layout": "3室2厅",
+        "floor": "中层",
+        "year": 2019
+      },
+      {
+        "id": "aug_de134b92-6c18-446c-ad8d-5987e73683f5",
+        "community": "重庆融创文旅城御辰",
+        "district": "沙坪坝区",
+        "total_price": 85.04,
+        "unit_price": 8143.0,
+        "area": 104.43,
+        "layout": "3室2厅",
+        "floor": "低层",
+        "year": 2018
+      },
+      {
+        "id": "aug_8ec149b2-1fe4-4114-9a7f-2820715eb947",
+        "community": "中交中央公园翠澜峯境",
+        "district": "两江新区",
+        "total_price": 114.3,
+        "unit_price": 12210.0,
+        "area": 93.61,
+        "layout": "2室2厅",
+        "floor": "高层",
+        "year": 2011
+      },
+      {
+        "id": "aug_d193aa6f-c429-4da9-8d84-8a7034a91ab7",
+        "community": "合景泰富·天銮",
+        "district": "渝中区",
+        "total_price": 354.5,
+        "unit_price": 22492.0,
+        "area": 157.61,
+        "layout": "5室2厅",
+        "floor": "中层",
+        "year": 2010
+      }
+    ]
+  }
+}

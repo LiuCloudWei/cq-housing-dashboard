@@ -1,0 +1,12 @@
+{
+  "status": "success",
+  "data": {
+    "district": "渝北",
+    "layout": "",
+    "area": 90.0,
+    "estimated_unit_price": 13260.04,
+    "estimated_total_price": 119.34,
+    "low_total_price": 109.79,
+    "high_total_price": 128.89
+  }
+}

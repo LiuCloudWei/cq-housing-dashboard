@@ -1,0 +1,125 @@
+{
+  "status": "success",
+  "data": [
+    {
+      "community": "新东福花园",
+      "district": "渝中区",
+      "total_price": 125.46,
+      "unit_price": 6319.0,
+      "area": 198.54,
+      "layout": "4室2厅",
+      "floor": "低层",
+      "year": 2019
+    },
+    {
+      "community": "新东福花园",
+      "district": "渝中区",
+      "total_price": 115.19,
+      "unit_price": 5802.0,
+      "area": 198.53,
+      "layout": "4室2厅",
+      "floor": "低层",
+      "year": 2013
+    },
+    {
+      "community": "新东福花园",
+      "district": "渝中区",
+      "total_price": 100.47,
+      "unit_price": 5068.0,
+      "area": 198.25,
+      "layout": "4室2厅",
+      "floor": "低层",
+      "year": 2012
+    },
+    {
+      "community": "新东福花园",
+      "district": "渝中区",
+      "total_price": 123.98,
+      "unit_price": 6254.0,
+      "area": 198.24,
+      "layout": "4室2厅",
+      "floor": "低层",
+      "year": 2009
+    },
+    {
+      "community": "新东福花园",
+      "district": "渝中区",
+      "total_price": 113.85,
+      "unit_price": 5753.0,
+      "area": 197.89,
+      "layout": "4室2厅",
+      "floor": "低层",
+      "year": 2009
+    },
+    {
+      "community": "新东福花园",
+      "district": "渝中区",
+      "total_price": 111.79,
+      "unit_price": 5650.0,
+      "area": 197.86,
+      "layout": "4室2厅",
+      "floor": "低层",
+      "year": 2006
+    },
+    {
+      "community": "新东福花园",
+      "district": "渝中区",
+      "total_price": 105.2,
+      "unit_price": 5321.0,
+      "area": 197.7,
+      "layout": "4室2厅",
+      "floor": "低层",
+      "year": 2003
+    },
+    {
+      "community": "新东福花园",
+      "district": "渝中区",
+      "total_price": 103.8,
+      "unit_price": 5260.0,
+      "area": 197.34,
+      "layout": "4室2厅",
+      "floor": "低层",
+      "year": 2022
+    },
+    {
+      "community": "新东福花园",
+      "district": "渝中区",
+      "total_price": 101.19,
+      "unit_price": 5136.0,
+      "area": 197.03,
+      "layout": "4室2厅",
+      "floor": "低层",
+      "year": 2018
+    },
+    {
+      "community": "新东福花园",
+      "district": "渝中区",
+      "total_price": 114.81,
+      "unit_price": 5837.0,
+      "area": 196.69,
+      "layout": "4室2厅",
+      "floor": "低层",
+      "year": 2014
+    },
+    {
+      "community": "新东福花园",
+      "district": "渝中区",
+      "total_price": 99.3,
+      "unit_price": 5076.0,
+      "area": 195.63,
+      "layout": "4室2厅",
+      "floor": "低层",
+      "year": 2013
+    },
+    {
+      "community": "新东福花园",
+      "district": "渝中区",
+      "total_price": 104.49,
+      "unit_price": 5351.0,
+      "area": 195.27,
+      "layout": "4室2厅",
+      "floor": "低层",
+      "year": 2008
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "status": "success",
+  "data": [
+    {
+      "community": "观宸",
+      "avg_price": 32568.22
+    },
+    {
+      "community": "洋世达南滨特区",
+      "avg_price": 31006.25
+    },
+    {
+      "community": "香港置地启元三期",
+      "avg_price": 30276.16
+    },
+    {
+      "community": "嘉凯城北麓官邸",
+      "avg_price": 30122.82
+    },
+    {
+      "community": "重庆来福士",
+      "avg_price": 29526.56
+    },
+    {
+      "community": "万科翡翠都会",
+      "avg_price": 29460.79
+    },
+    {
+      "community": "香港置地启元一期",
+      "avg_price": 29429.08
+    },
+    {
+      "community": "东原1891印长江",
+      "avg_price": 29357.04
+    },
+    {
+      "community": "重庆来福士住宅",
+      "avg_price": 28144.27
+    },
+    {
+      "community": "香港置地壹号半岛",
+      "avg_price": 27375.02
+    }
+  ]
+}
