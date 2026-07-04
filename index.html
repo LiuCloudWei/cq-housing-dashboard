@@ -590,20 +590,18 @@ createApp({
             const theme = isDark.value ? 'dark' : null;
             chartIds.forEach(id => {
                 const el = document.getElementById(id);
-                if (!el || el.clientWidth === 0 || el.clientHeight === 0) return;
-                // 若已存在且主题改变，需要销毁重建以适配Echarts自带的深色主题
-                if (charts[id]) {
-                    // Check if we need to switch theme
-                    const currentTheme = charts[id].getOption()?.backgroundColor ? 'dark' : 'light';
-                    // Echarts dark theme background is #100C2A normally, we override it
+                if (!el) return;
+                // Only init if not already initialized
+                if (!charts[id]) {
+                    charts[id] = echarts.init(el, theme);
                 }
-                
-                if (charts[id]) charts[id].dispose();
-                charts[id] = echarts.init(el, theme);
-                charts[id].resize();
+                // Always resize to ensure it fits (in case it was display:none before)
+                if (el.clientWidth > 0 && el.clientHeight > 0) {
+                    charts[id].resize();
+                }
             });
             if (!resizeBound) {
-                window.addEventListener('resize', () => Object.values(charts).forEach(c => c.resize()));
+                window.addEventListener('resize', () => Object.values(charts).forEach(c => c && c.resize()));
                 resizeBound = true;
             }
         };
@@ -613,8 +611,12 @@ createApp({
             localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
             if (isDark.value) document.documentElement.classList.add('dark');
             else document.documentElement.classList.remove('dark');
-            // Re-render all charts
+            
+            // Dispose all and recreate for theme switch
+            Object.values(charts).forEach(c => c && c.dispose());
+            charts = {};
             initCharts();
+            
             if(activeTab.value === 'dashboard') fetchDashboard();
             if(activeTab.value === 'compare') fetchCompare();
             if(activeTab.value === 'outliers') renderOutlierChart();
@@ -642,7 +644,7 @@ createApp({
         const fetchFilteredStats = async () => { const res = await axios.get(`${API_BASE}/filtered_stats`, { params: paramsFrom(filters.value) }); filteredStats.value = res.data.data; };
         
         const fetchDashboard = async () => {
-            // Re-check charts init in case of theme switch
+            // Re-check charts init
             initCharts();
             const [districtRes, distRes, scatterRes, topRes, yearRes, clusterRes, outlierRes] = await Promise.all([
                 axios.get(`${API_BASE}/avg_price_by_district`), 
